@@ -1,0 +1,6 @@
+Plotted to 'C:\Users\rudy\Documents\github\hiva-hunch-pcb\gerber\GerberV2.0\bubble_detector_v2_shield-F_Cu.gbr'.
+Plotted to 'C:\Users\rudy\Documents\github\hiva-hunch-pcb\gerber\GerberV2.0\bubble_detector_v2_shield-B_Cu.gbr'.
+Plotted to 'C:\Users\rudy\Documents\github\hiva-hunch-pcb\gerber\GerberV2.0\bubble_detector_v2_shield-F_Silkscreen.gbr'.
+Plotted to 'C:\Users\rudy\Documents\github\hiva-hunch-pcb\gerber\GerberV2.0\bubble_detector_v2_shield-B_Silkscreen.gbr'.
+Created Gerber job file 'C:\Users\rudy\Documents\github\hiva-hunch-pcb\gerber\GerberV2.0\bubble_detector_v2_shield-job.gbrjob'.
+Info: Done.

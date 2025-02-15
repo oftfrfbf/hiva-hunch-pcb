@@ -496,7 +496,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../../../../gerber/GerberV2.0/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
