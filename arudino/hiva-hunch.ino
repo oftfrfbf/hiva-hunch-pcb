@@ -1,108 +1,83 @@
-/*
-The H.I.V.A Hunch PCB v2 is a medical device designed to monitor and restrict the presence of gas bubbles suspended in fluid passing through PVC tubing.
-SparkFun Inventor’s Kit
-  Circuit 3C-Motion Alarm
+#include <Servo.h>
 
-  Control the color of an RGB LED using an ultrasonic distance sensor. When an object is close to the sensor, buzz the buzzer and wiggle the servo motor.
+Servo myservo;  // create Servo object to control a servo
+bool clamped = false;    // variable to store the servo position
 
-  This sketch was written by SparkFun Electronics, with lots of help from the Arduino community.
-  This code is completely free for any use.
+int LED_RED = 12;
+int LED_GREEN = 11;
+int LED_BLUE = 10;
 
-  View circuit diagram and instructions at: https://learn.sparkfun.com/tutorials/sparkfun-inventors-kit-experiment-guide---v41
-  Download drawings and code at: https://github.com/sparkfun/SIK-Guide-Code
-*/
+int BUZZER = 3;
 
-#include <Servo.h>                //include the servo library
+const int trigPin = 5;
+const int echoPin = 6;
 
-const int trigPin = 12;           //connects to the trigger pin on the distance sensor
-const int echoPin = 11;           //connects to the echo pin on the distance sensor
+float duration, distanceCM, distanceIN, distanceIN_PREV;
 
-const int redPin = 5;             //pin to control the red LED inside the RGB LED
-const int greenPin = 3;           //pin to control the green LED inside the RGB LED
-const int bluePin = 4;            //pin to control the blue LED inside the RGB LED
+void setup() {
 
-const int buzzerPin = 10;         //pin that will drive the buzzer
+  // myservo.attach(9);  // attaches the servo on pin
 
-float distance = 0;               //stores the distance measured by the distance sensor
+  pinMode(LED_RED, OUTPUT);
+  digitalWrite(LED_RED, HIGH);
 
-Servo myservo;                    //create a servo object
+  pinMode(LED_GREEN, OUTPUT);
+  digitalWrite(LED_GREEN, HIGH);
+  
+  pinMode(BUZZER, OUTPUT);
 
-void setup()
-{
-  Serial.begin (9600);        //set up a serial connection with the computer
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
 
-  pinMode(trigPin, OUTPUT);   //the trigger pin will output pulses of electricity
-  pinMode(echoPin, INPUT);    //the echo pin will measure the duration of pulses coming back from the distance sensor
-
-  //set the RGB LED pins to output
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
-
-  pinMode(buzzerPin, OUTPUT);   //set the buzzer pin to output
-
-  myservo.attach(9);            //use pin 9 to control the servo
-
+  // myservo.write(90);
+  digitalWrite(LED_GREEN, HIGH);
+  digitalWrite(LED_RED, LOW);
 }
 
 void loop() {
-  distance = getDistance();   //variable to store the distance measured by the sensor
-
-  Serial.print(distance);     //print the distance that was measured
-  Serial.println(" in");      //print units after the distance
-
-  if (distance <= 10) {                       //if the object is close
-
-    //make the RGB LED red
-    analogWrite(redPin, 255);
-    analogWrite(greenPin, 0);
-    analogWrite(bluePin, 0);
-
-    //this code wiggles the servo and beeps the buzzer
-    tone(buzzerPin, 272);         //buzz the buzzer pin
-    myservo.write(10);            //move the servo to 45 degrees
-    delay(100);                   //wait 100 milliseconds
-
-    noTone(buzzerPin);            //turn the buzzer off
-    myservo.write(150);           //move the servo to 135 degrees
-    delay(100);                   //wait 100 milliseconds
-
-
-  } else if (10 < distance && distance < 20) { //if the object is a medium distance
-
-    //make the RGB LED yellow
-    analogWrite(redPin, 255);
-    analogWrite(greenPin, 50);
-    analogWrite(bluePin, 0);
-
-  } else {                                    //if the object is far away
-
-    //make the RGB LED green
-    analogWrite(redPin, 0);
-    analogWrite(greenPin, 255);
-    analogWrite(bluePin, 0);
-  }
-
-  delay(50);      //delay 50ms between each reading
-}
-
-//------------------FUNCTIONS-------------------------------
-
-//RETURNS THE DISTANCE MEASURED BY THE HC-SR04 DISTANCE SENSOR
-float getDistance()
-{
-  float echoTime;                   //variable to store the time it takes for a ping to bounce off an object
-  float calculatedDistance;         //variable to store the distance calculated from the echo time
-
-  //send out an ultrasonic pulse that's 10ms long
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distanceCM = (duration * 0.0343) / 2;
+  distanceIN = distanceCM / 2.54;
+  
+  Serial.print("Distance In: ");
+  Serial.println(distanceIN);
 
-  echoTime = pulseIn(echoPin, HIGH);      //use the pulsein command to see how long it takes for the
-                                          //pulse to bounce back to the sensor
+  if (distanceIN >= 5.0 && distanceIN <= 8.0)  {
+    // clamp down
+    if (!clamped) {
+      // clamp and set var
+      clamped = true;
+      // Turn on Green LED
+      digitalWrite(LED_GREEN, HIGH);
+      digitalWrite(LED_RED, LOW);
+    
+      // Play Sound
+      digitalWrite(BUZZER, HIGH);
+      delay(100);
+      digitalWrite(BUZZER, LOW);
 
-  calculatedDistance = echoTime / 148.0;  //calculate the distance of the object that reflected the pulse (half the bounce time multiplied by the speed of sound)
+      // myservo.write(90);
+      // delay(500);
+    }
+  } else {
+    // open clamp up
+    if (clamped) {
+      clamped = false;
 
-  return calculatedDistance;              //send back the distance that was calculated
+      // Turn on Red LED
+      digitalWrite(LED_GREEN, LOW);
+      digitalWrite(LED_RED, HIGH);
+
+      // myservo.write(0);
+    }
+  }
+  delay(500);
 }
