@@ -3,11 +3,12 @@
 #include <Servo.h>
 #include <NewPing.h> // https://youtu.be/pqlU3LnO79M?si=sfCyYIluLruaKDrs
 
-const int ServoPin = 6;
 const int TriggerPin = 5;
 const int EchoPin = 6;
 
-NewPing sonar (TriggerPin, EchoPin, 30);
+NewPing sonar (TriggerPin, EchoPin, 50);
+
+const int ServoPin = 9;
 Servo servo;  // create Servo object to control a servo
 
 bool clamped = false;    // variable to store the servo position
@@ -18,11 +19,12 @@ int LED_BLUE = 10;
 
 int BUZZER = 3;
 
-float duration, distanceCM, distanceIN, distanceIN_PREV;
+// float duration, distanceCM, distanceIN, distanceIN_PREV;
 
 void setup() {
   Serial.begin(9600);
   servo.attach(ServoPin);  // attaches the servo on pin
+  servo.write(90);
 
   pinMode(LED_RED, OUTPUT);
   digitalWrite(LED_RED, HIGH);
@@ -31,9 +33,6 @@ void setup() {
   digitalWrite(LED_GREEN, HIGH);
   
   pinMode(BUZZER, OUTPUT);
-
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
   
   digitalWrite(LED_GREEN, HIGH);
   digitalWrite(LED_RED, LOW);
@@ -43,13 +42,10 @@ void loop() {
   int cm = sonar.ping_cm();
   Serial.println(cm);
 
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  // int angle = map(cm, 1, 30, 90, 0);
+  // servo.write(angle);
 
-  if (cm >= 5.0 && cm <= 10.0)  {
+  if (cm >= 5.0 && cm <= 15.0)  {
     // clamp down
     if (!clamped) {
       // clamp and set var
@@ -63,8 +59,8 @@ void loop() {
       delay(100);
       digitalWrite(BUZZER, LOW);
 
-      // myservo.write(90);
-      // delay(500);
+      servo.write(0);
+      // delay(1000);
     }
   } else {
     // open clamp up
@@ -75,8 +71,9 @@ void loop() {
       digitalWrite(LED_GREEN, LOW);
       digitalWrite(LED_RED, HIGH);
 
-      // myservo.write(0);
+      servo.write(90);
     }
   }
-  delay(50);
+
+  delay(1000);
 }
