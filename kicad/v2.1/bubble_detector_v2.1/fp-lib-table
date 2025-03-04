@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "silk_hiva_hunch")(type "KiCad")(uri "C:/Users/rudy/Documents/github/hiva-hunch-pcb/kicad/footprints/silk_hiva_hunch")(options "")(descr ""))
   (lib (name "silk_hiva_hunch_name")(type "KiCad")(uri "C:/Users/rudy/Documents/github/hiva-hunch-pcb/kicad/footprints/silk_hiva_hunch_name")(options "")(descr ""))
+  (lib (name "nasa")(type "KiCad")(uri "C:/Users/rudy/Documents/github/hiva-hunch-pcb/kicad/footprints/nasa")(options "")(descr ""))
 )
